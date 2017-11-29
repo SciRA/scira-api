@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="scira.sparql"/>
+    <context:property-placeholder
+            location="classpath:META-INF/scira/sparql/jndi.properties,
+                      classpath:META-INF/scira/sparql/sparql.properties" ignore-unresolvable="true"/>
+
+    <bean id="virtuosoDataSource" class="virtuoso.jdbc4.VirtuosoConnectionPoolDataSource">
+        <property name="user" value="${sparql.username}"/>
+        <property name="pwdClear" value="${sparql.password}"/>
+        <property name="portNumber" value="${sparql.port}"/>
+        <property name="serverName" value="${sparql.servername}"/>
+        <property name="maxPoolSize" value="${sparql.maxpoolsize}"/>
+    </bean>
+
+    <bean id="virtualGraph" class="virtuoso.jena.driver.VirtGraph">
+        <constructor-arg name="_graphName" value="${sparql.graphname}"/>
+        <constructor-arg name="_ds" ref="virtuosoDataSource"/>
+    </bean>
+
+    <bean id="jsonMessageConverter"
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+    </bean>
+
+
+</beans>
